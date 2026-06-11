@@ -23,7 +23,7 @@ export default function Sidebar({ page, setPage, open, setOpen }) {
             </svg>
           </div>
           <div>
-            <div className="sidebar-logo-name">CloudNet</div>
+            <div className="sidebar-logo-name">RETAKENET</div>
             <div className="sidebar-logo-sub">v2.1.0</div>
           </div>
         </div>
