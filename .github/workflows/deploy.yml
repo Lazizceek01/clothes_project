@@ -1,0 +1,36 @@
+name: Deploy Node.js Project (PM2 & Nginx)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd clothes_project || git clone ${{ github.repositoryUrl }} clothes_project && cd clothes_project
+            
+            # 2. GitHub'dan eng oxirgi kodni tortish
+            git pull origin main
+            
+            # 3. Node.js paketlarini o'rnatish va build qilish (agar kerak bo'lsa)
+            npm install
+            # npm run build # Agar Next.js yoki production build kerak bo'lsa, buni yoqing
+
+            # 4. PM2 orqali loyihani qayta ishga tushirish
+            # Agar PM2 da bu nomli jarayon bo'lsa restart qiladi, bo'lmasa noldan boshlaydi
+            PORT=3000 pm2 restart clothes-project || PORT=3000 pm2 start npm --name "clothes-project" -- start
+            
+            # 5. PM2 holatini saqlash
+            pm2 save
