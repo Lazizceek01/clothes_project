@@ -10,7 +10,7 @@ export default defineConfig({
   preview: {
     host: '0.0.0.0',
     port: 3000,
-    ALLOWED_HOSTS: ['clothes.codes', 'www.clothes.codes'],
+    allowedHosts: ['clothes.codes', 'www.clothes.codes'],
   },
   build: {
     outDir: 'dist',
