@@ -63,7 +63,7 @@ export default function Dashboard({ setPage }) {
       <div className="page-header">
         <div>
           {/* Edit */}
-          <h2 className="page-title">RETAKE - 1</h2>
+          <h2 className="page-title">RETAKE</h2>
           <p className="page-desc">Kiyim-kechak ulgurji kompaniyasi — bulut monitoring</p>
         </div>
         <div className="live-badge">
