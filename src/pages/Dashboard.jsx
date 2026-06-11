@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { SUMMARY_STATS, AWS_RESOURCES, SECURITY_EVENTS, DAILY_TRAFFIC, DAILY_COST } from "../db";
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { useEffect, useState } from "react"
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+import { AWS_RESOURCES, DAILY_COST, DAILY_TRAFFIC, SECURITY_EVENTS, SUMMARY_STATS } from "../db"
 
 function StatCard({ label, value, sub, color, icon }) {
   return (
@@ -63,7 +63,7 @@ export default function Dashboard({ setPage }) {
       <div className="page-header">
         <div>
           {/* Edit */}
-          <h2 className="page-title">RETAKE</h2>
+          <h2 className="page-title">Resubmission</h2>
           <p className="page-desc">Kiyim-kechak ulgurji kompaniyasi — bulut monitoring</p>
         </div>
         <div className="live-badge">
