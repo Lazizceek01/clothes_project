@@ -3,34 +3,40 @@ name: Deploy Node.js Project (PM2 & Nginx)
 on:
   push:
     branches:
-      - main
+      - main # Agar loyihangiz master bo'lsa, master deb o'zgartiring
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      # 1. Kodni GitHub runner-ga yuklash (Node.js 24 qo'llab-quvvatlaydigan v4 versiya)
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
+      # 2. Serverga SSH orqali ulanish va buyruqlarni bajarish (v1.0.3 barqaror versiyasi)
       - name: Deploy to Server via SSH
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd clothes_project || git clone ${{ github.repositoryUrl }} clothes_project && cd clothes_project
+            # Tizim root rejimida ishlayotganini ta'minlash va loyiha papkasiga kirish
+            cd /root/clothes_project || git clone ${{ github.repositoryUrl }} /root/clothes_project && cd /root/clothes_project
             
-            # 2. GitHub'dan eng oxirgi kodni tortish
-            git pull origin main
+            # 1. GitHub'dan eng oxirgi o'zgarishlarni tortish
+            git fetch --all
+            git reset --hard origin/main
             
-            # 3. Node.js paketlarini o'rnatish va build qilish (agar kerak bo'lsa)
+            # 2. Eski keshlar va paketlarni tozalab, yangi paketlarni o'rnatish
             npm install
-            # npm run build # Agar Next.js yoki production build kerak bo'lsa, buni yoqing
-
-            # 4. PM2 orqali loyihani qayta ishga tushirish
-            # Agar PM2 da bu nomli jarayon bo'lsa restart qiladi, bo'lmasa noldan boshlaydi
-            PORT=3000 pm2 restart clothes-project || PORT=3000 pm2 start npm --name "clothes-project" -- start
             
-            # 5. PM2 holatini saqlash
+            # 3. Loyihani qayta yig'ish (SAYT O'ZGARISHI UCHUN ENG MUHIM QADAM!)
+            npm run build
+
+            # 4. PM2 orqali loyihani uzilishlarsiz (Zero-Downtime) qayta ishga tushirish
+            # Agar jarayon avval bor bo'lsa reload qiladi (sayt o'chmaydi), yo'q bo'lsa noldan boshlaydi
+            PORT=3000 pm2 reload clothes-project --update-env || PORT=3000 pm2 start npm --name "clothes-project" -- start
+            
+            # 5. PM2 holatini xotiraga saqlab qo'yish
             pm2 save
